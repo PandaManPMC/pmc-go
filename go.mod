@@ -1,4 +1,4 @@
-module "github.com/PandaManPMC/pmc-go"
+module github.com/PandaManPMC/pmc-go
 
 go 1.21.10
 
