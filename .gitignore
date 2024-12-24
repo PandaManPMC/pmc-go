@@ -1,0 +1,9 @@
+.idea/
+bin/
+*.log
+.DS_Store
+go.sum
+*.exe
+*.pdb
+script/output/*
+go.work.sum
