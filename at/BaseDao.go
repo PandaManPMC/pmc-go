@@ -258,11 +258,11 @@ func (that *BaseDao) AddModelBatch(tx *sql.Tx, modPointerList interface{}) (int6
 	return insertID, rows, nil
 }
 
-// updateMustAffected 进行更新，必须要有受影响行，如果不存在受影响行则 error 不为空
+// UpdateMustAffected 进行更新，必须要有受影响行，如果不存在受影响行则 error 不为空
 // tx *sql.Tx 事务控制器
 // s string 执行的 SQL
 // args ...any	参数，可变数组
-func (that *BaseDao) updateMustAffected(tx *sql.Tx, s string, args ...any) (int64, error) {
+func (that *BaseDao) UpdateMustAffected(tx *sql.Tx, s string, args ...any) (int64, error) {
 	result, err1 := tx.Exec(s, args...)
 	if nil != err1 {
 		that.LogError(fmt.Sprintf("updateMustAffected - 1 sql=%s", s), err1)
@@ -279,11 +279,11 @@ func (that *BaseDao) updateMustAffected(tx *sql.Tx, s string, args ...any) (int6
 	return rowsAffected, nil
 }
 
-// update 进行更新，可以没有受影响行
+// Update 进行更新，可以没有受影响行
 // tx *sql.Tx 事务控制器
 // s string 执行的 SQL
 // args ...any	参数，可变数组
-func (that *BaseDao) update(tx *sql.Tx, s string, args ...any) (int64, error) {
+func (that *BaseDao) Update(tx *sql.Tx, s string, args ...any) (int64, error) {
 	result, err1 := tx.Exec(s, args...)
 	if nil != err1 {
 		that.LogError(fmt.Sprintf("updateMustAffected - 1 sql=%s", s), err1)
@@ -297,8 +297,8 @@ func (that *BaseDao) update(tx *sql.Tx, s string, args ...any) (int64, error) {
 	return rowsAffected, nil
 }
 
-// addLimit 分页
-func (that *BaseDao) addLimit(condition map[string]interface{}, s string) string {
+// AddLimit 分页
+func (that *BaseDao) AddLimit(condition map[string]interface{}, s string) string {
 	if _, isLB := condition["condLimitBegin"]; isLB {
 		condLimitBegin, isOk := condition["condLimitBegin"].(int)
 		if !isOk {
@@ -339,11 +339,11 @@ func (that *BaseDao) addLimit(condition map[string]interface{}, s string) string
 
 // addCondTime 为 sql 增加 created_at 字段的时间之间条件
 func (that *BaseDao) addCondTimeMust(condition map[string]interface{}, sql string, params []any, alias string) (string, []any) {
-	return that.addCondTime(condition, sql, params, "", alias)
+	return that.AddCondTime(condition, sql, params, "", alias)
 }
 
-// addCondTime 为 sql 增加 指定 tableField 字段的时间之间条件
-func (that *BaseDao) addCondTime(condition map[string]interface{}, sql string, params []any, tableField, alias string) (string, []any) {
+// AddCondTime 为 sql 增加 指定 tableField 字段的时间之间条件
+func (that *BaseDao) AddCondTime(condition map[string]interface{}, sql string, params []any, tableField, alias string) (string, []any) {
 	if "" == tableField {
 		tableField = "created_at"
 	}
@@ -367,8 +367,8 @@ func (that *BaseDao) addCondTime(condition map[string]interface{}, sql string, p
 	return sql, params
 }
 
-// addCondORDER 为 sql 增加排序
-func (that *BaseDao) addCondORDER(condition map[string]interface{}, sql, alias string) string {
+// AddCondORDER 为 sql 增加排序
+func (that *BaseDao) AddCondORDER(condition map[string]interface{}, sql, alias string) string {
 	if v, isOk := condition["condORDERField"]; isOk {
 
 		field := v.(string)
@@ -397,8 +397,8 @@ func (that *BaseDao) addCondORDER(condition map[string]interface{}, sql, alias s
 	return sql
 }
 
-// addCondFieldSQL 自定义个字段条件
-func (that *BaseDao) addCondFieldSQL(whereSQL, fieldName string, params []any, val any) (string, []any) {
+// AddCondFieldSQL 自定义个字段条件
+func (that *BaseDao) AddCondFieldSQL(whereSQL, fieldName string, params []any, val any) (string, []any) {
 	if 0 != len(params) || strings.Contains(whereSQL, "WHERE ") {
 		if strings.HasPrefix(fieldName, "!") {
 			whereSQL = fmt.Sprintf("%s AND %s != ?", whereSQL, fieldName)
@@ -416,8 +416,8 @@ func (that *BaseDao) addCondFieldSQL(whereSQL, fieldName string, params []any, v
 	return whereSQL, params
 }
 
-// addCondFieldSQLIn 自定义个字段条件（bean()）
-func (that *BaseDao) addCondFieldSQLIn(whereSQL, fieldName string, params []any, val any) (string, []any) {
+// AddCondFieldSQLIn 自定义个字段条件（bean()）
+func (that *BaseDao) AddCondFieldSQLIn(whereSQL, fieldName string, params []any, val any) (string, []any) {
 	if 0 != len(params) || strings.Contains(whereSQL, "WHERE ") {
 		if strings.HasPrefix(fieldName, "!") {
 			whereSQL = fmt.Sprintf("%s AND %s NOT IN(?)", whereSQL, fieldName)
