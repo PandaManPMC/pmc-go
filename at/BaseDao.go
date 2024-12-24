@@ -337,8 +337,8 @@ func (that *BaseDao) AddLimit(condition map[string]interface{}, s string) string
 	return s
 }
 
-// addCondTime 为 sql 增加 created_at 字段的时间之间条件
-func (that *BaseDao) addCondTimeMust(condition map[string]interface{}, sql string, params []any, alias string) (string, []any) {
+// AddCondTimeMust 为 sql 增加 created_at 字段的时间之间条件
+func (that *BaseDao) AddCondTimeMust(condition map[string]interface{}, sql string, params []any, alias string) (string, []any) {
 	return that.AddCondTime(condition, sql, params, "", alias)
 }
 
