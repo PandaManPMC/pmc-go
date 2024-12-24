@@ -1,4 +1,4 @@
-module pmc-go
+module "pmc-go"
 
 go 1.21.10
 
