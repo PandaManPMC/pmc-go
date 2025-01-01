@@ -454,6 +454,7 @@ func (*BaseModel) GetModelTableFieldValueList(alias string, fieldSQL string, tab
 	return list
 }
 
+// GetFieldByTableFieldNameORJSONTag
 // 根据 k 查询 json 或者字段名获得 model 的表字段 table tag
 // k string	字段名或者 json tag，如果未找到会使用 k 作为返回值，如果 k 本身就是 table tag ，就不会影响 sql 的正确
 // m interface{}	model
@@ -480,14 +481,14 @@ func (*BaseModel) GetFieldByTableFieldNameORJSONTag(k string, m interface{}) str
 
 // OrderFieldConditionToTableField 将 map 中的 condORDERField 转为表字段名（可以是原型字段或 tag 字段）
 func (instance *BaseModel) OrderFieldConditionToTableField(condition map[string]any, tableField map[string]TableField) {
-	k, isOk := condition["condORDERField"]
+	k, isOk := condition[CondORDERField]
 	if nil == condition || 0 == len(condition) || !isOk {
 		return
 	}
 	for k2, v2 := range tableField {
 		// 支持 tag 有 json、table 以及 model 字段名
 		if k == k2 || k == v2.FieldNameByTable || k == v2.FieldNameByJSON {
-			condition["condORDERField"] = v2.FieldNameByTable
+			condition[CondORDERField] = v2.FieldNameByTable
 			return
 		}
 	}

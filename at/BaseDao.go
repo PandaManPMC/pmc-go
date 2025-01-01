@@ -299,36 +299,36 @@ func (that *BaseDao) Update(tx *sql.Tx, s string, args ...any) (int64, error) {
 
 // AddLimit 分页
 func (that *BaseDao) AddLimit(condition map[string]interface{}, s string) string {
-	if _, isLB := condition["condLimitBegin"]; isLB {
-		condLimitBegin, isOk := condition["condLimitBegin"].(int)
+	if _, isLB := condition[CondLimitBegin]; isLB {
+		condLimitBegin, isOk := condition[CondLimitBegin].(int)
 		if !isOk {
-			condLimitBegin, _ = strconv.Atoi(condition["condLimitBegin"].(string))
+			condLimitBegin, _ = strconv.Atoi(condition[CondLimitBegin].(string))
 		}
 		condPageSize := 20
-		if _, isPS := condition["condPageSize"]; isPS {
-			condPageSize, isOk = condition["condPageSize"].(int)
+		if _, isPS := condition[CondPageSize]; isPS {
+			condPageSize, isOk = condition[CondPageSize].(int)
 			if !isOk {
-				condPageSize, _ = strconv.Atoi(condition["condPageSize"].(string))
+				condPageSize, _ = strconv.Atoi(condition[CondPageSize].(string))
 			}
 		}
 		s = fmt.Sprintf("%s LIMIT %d,%d", s, condLimitBegin, condPageSize)
-	} else if _, isPI := condition["condPageIndex"]; isPI {
-		condPageIndex, isOk := condition["condPageIndex"].(int)
+	} else if _, isPI := condition[CondPageIndex]; isPI {
+		condPageIndex, isOk := condition[CondPageIndex].(int)
 		if !isOk {
-			condPageIndex, _ = strconv.Atoi(condition["condPageIndex"].(string))
+			condPageIndex, _ = strconv.Atoi(condition[CondPageIndex].(string))
 		}
 		condPageSize := 20
-		if _, isPS := condition["condPageSize"]; isPS {
-			condPageSize, isOk = condition["condPageSize"].(int)
+		if _, isPS := condition[CondPageSize]; isPS {
+			condPageSize, isOk = condition[CondPageSize].(int)
 			if !isOk {
-				condPageSize, _ = strconv.Atoi(condition["condPageSize"].(string))
+				condPageSize, _ = strconv.Atoi(condition[CondPageSize].(string))
 			}
 		}
 		s = fmt.Sprintf("%s LIMIT %d,%d", s, (condPageIndex-1)*condPageSize, condPageSize)
-	} else if _, isPS := condition["condPageSize"]; isPS {
-		condPageSize, isOk := condition["condPageSize"].(int)
+	} else if _, isPS := condition[CondPageSize]; isPS {
+		condPageSize, isOk := condition[CondPageSize].(int)
 		if !isOk {
-			condPageSize, _ = strconv.Atoi(condition["condPageSize"].(string))
+			condPageSize, _ = strconv.Atoi(condition[CondPageSize].(string))
 		}
 		s = fmt.Sprintf("%s LIMIT 0,%d", s, condPageSize)
 	} else {
@@ -347,29 +347,29 @@ func (that *BaseDao) AddCondTime(condition map[string]interface{}, sql string, p
 	if "" == tableField {
 		tableField = "created_at"
 	}
-	if _, isOk := condition["condBeginTime"]; isOk {
+	if _, isOk := condition[CondBeginTime]; isOk {
 		if 0 != len(params) || strings.Contains(sql, "WHERE ") {
 			sql = fmt.Sprintf("%s AND %s.%s >= ?", sql, alias, tableField)
 		} else {
 			sql = fmt.Sprintf("%s Where %s.%s >= ?", sql, alias, tableField)
 		}
-		params = append(params, condition["condBeginTime"])
+		params = append(params, condition[CondBeginTime])
 	}
-	if _, isOk := condition["condEndTime"]; isOk {
+	if _, isOk := condition[CondEndTime]; isOk {
 		if 0 != len(params) || strings.Contains(sql, "WHERE ") {
 			sql = fmt.Sprintf("%s AND %s.%s < ?", sql, alias, tableField)
 		} else {
 			sql = fmt.Sprintf("%s Where %s.%s < ?", sql, alias, tableField)
 		}
 
-		params = append(params, condition["condEndTime"])
+		params = append(params, condition[CondEndTime])
 	}
 	return sql, params
 }
 
 // AddCondORDER 为 sql 增加排序
 func (that *BaseDao) AddCondORDER(condition map[string]interface{}, sql, alias string) string {
-	if v, isOk := condition["condORDERField"]; isOk {
+	if v, isOk := condition[CondORDERField]; isOk {
 
 		field := v.(string)
 		fields := []string{field}
@@ -378,7 +378,7 @@ func (that *BaseDao) AddCondORDER(condition map[string]interface{}, sql, alias s
 		}
 
 		orderBy := "DESC"
-		if "1" == condition["condORDERType"] || 1 == condition["condORDERType"] {
+		if "1" == condition[CondORDERType] || 1 == condition[CondORDERType] {
 			orderBy = "ASC"
 		}
 
