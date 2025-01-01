@@ -312,7 +312,7 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 
 		// 以别名开头
 		if strings.HasPrefix(k, alias) {
-			k = k[len(alias):]
+			k = k[len(alias)+1:]
 		}
 
 		fieldName := ""
