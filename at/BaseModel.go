@@ -278,6 +278,15 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 	}
 	where = ""
 	whereArr := make(map[string]bool)
+
+	isConditionAlias := false
+	for k, _ := range condition {
+		if strings.HasPrefix(k, alias) {
+			isConditionAlias = true
+			break
+		}
+	}
+
 	for k, v := range condition {
 		// k 如果是 ! 开头则表示是 不等于条件，则进行切割
 		operator := ""
@@ -292,6 +301,18 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 			// 操作符
 			operator = k[:3]
 			k = k[3:]
+		}
+
+		if isConditionAlias {
+			// 用了别名，又没有以别名开头，跳过
+			if !strings.HasPrefix(k, alias) {
+				continue
+			}
+		}
+
+		// 以别名开头
+		if strings.HasPrefix(k, alias) {
+			k = k[len(alias):]
 		}
 
 		fieldName := ""
