@@ -29,7 +29,7 @@ func (*BaseService) panicRollback(tx *sql.Tx) {
 	}
 }
 
-func (that *BaseService) QueryTransaction(db *sql.DB, fun func(tx *sql.Tx) error) error {
+func (that *BaseService) Transaction(db *sql.DB, fun func(tx *sql.Tx) error) error {
 	tx, _ := db.Begin()
 	defer that.panicRollback(tx)
 	err := fun(tx)
