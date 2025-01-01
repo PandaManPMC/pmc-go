@@ -5,7 +5,6 @@ import (
 )
 
 type BaseService struct {
-	db *sql.DB
 }
 
 var baseServiceInstance BaseService
@@ -14,8 +13,10 @@ func GetInstanceByBaseService() *BaseService {
 	return &baseServiceInstance
 }
 
-func (that *BaseService) SetDb(db *sql.DB) {
-	that.db = db
+var db *sql.DB
+
+func SetDb(db_ *sql.DB) {
+	db = db_
 }
 
 func (*BaseService) panicRollback(tx *sql.Tx) {
@@ -47,7 +48,7 @@ func (that *BaseService) Transaction(db *sql.DB, fun func(tx *sql.Tx) error) err
 // int64	入库的主键值， < 1 为失败
 // error	不为 nil 时失败
 func (that *BaseService) AddModel(modPointer interface{}) (int64, error) {
-	tx, _ := that.db.Begin()
+	tx, _ := db.Begin()
 	defer that.panicRollback(tx)
 	result, err := GetInstanceByBaseDao().AddModel(tx, modPointer)
 	if nil != err || 1 > result {
@@ -63,7 +64,7 @@ func (that *BaseService) AddModel(modPointer interface{}) (int64, error) {
 // int64	成功修改数量
 // error	不为 nil 时失败
 func (that *BaseService) UpdateByID(modPointer interface{}) (int64, error) {
-	tx, _ := that.db.Begin()
+	tx, _ := db.Begin()
 	defer that.panicRollback(tx)
 	result, err := GetInstanceByBaseDao().UpdateByID(tx, modPointer)
 	if nil != err || 1 > result {
