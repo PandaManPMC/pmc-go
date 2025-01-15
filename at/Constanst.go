@@ -21,3 +21,24 @@ const (
 	// CondPageSize 页数据数量
 	CondPageSize = "condPageSize"
 )
+
+func IsBaseCond(key string) bool {
+	switch key {
+	case CondORDERField:
+		fallthrough
+	case CondORDERType:
+		fallthrough
+	case CondBeginTime:
+		fallthrough
+	case CondEndTime:
+		fallthrough
+	case CondLimitBegin:
+		fallthrough
+	case CondPageIndex:
+		fallthrough
+	case CondPageSize:
+		return true
+	default:
+		return false
+	}
+}
