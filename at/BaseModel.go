@@ -234,6 +234,7 @@ const (
 	LTeq = "?<=" // 小于等于
 	GTeq = "?>=" // 大于等于
 	NOeq = "!"   // 不等于
+	In   = "?in" // In
 )
 
 // AddLt 小于
@@ -263,6 +264,12 @@ func AddGtEq(condition map[string]any, key string, val any) map[string]any {
 // AddNOeq 不等于
 func AddNOeq(condition map[string]any, key string, val any) map[string]any {
 	condition[fmt.Sprintf("%s%s", NOeq, key)] = val
+	return condition
+}
+
+// AddIn IN
+func AddIn(condition map[string]any, key string, val any) map[string]any {
+	condition[fmt.Sprintf("%s%s", In, key)] = val
 	return condition
 }
 
@@ -350,9 +357,13 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 					}
 				}
 			} else {
-				params = append(params, v)
+				if In != operator {
+					params = append(params, v)
+				}
 				if "" == where {
-					if Gt == operator {
+					if In == operator {
+						where = fmt.Sprintf("WHERE %s.%s IN(%s) ", alias, fieldName, v)
+					} else if Gt == operator {
 						where = fmt.Sprintf("WHERE %s.%s > ? ", alias, fieldName)
 					} else if Lt == operator {
 						where = fmt.Sprintf("WHERE %s.%s < ? ", alias, fieldName)
@@ -366,7 +377,9 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 						where = fmt.Sprintf("WHERE %s.%s != ? ", alias, fieldName)
 					}
 				} else {
-					if Gt == operator {
+					if In == operator {
+						where = fmt.Sprintf("%s AND %s.%s IN(%s) ", where, alias, fieldName, v)
+					} else if Gt == operator {
 						where = fmt.Sprintf("%s AND %s.%s > ? ", where, alias, fieldName)
 					} else if Lt == operator {
 						where = fmt.Sprintf("%s AND %s.%s < ? ", where, alias, fieldName)
