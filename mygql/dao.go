@@ -33,6 +33,18 @@ type QueryOptions struct {
 
 // Query
 //
+//	type MemberDto struct {
+//		Id           uint64 `json:"id" table:"id"` // search编号
+//		MemberOpenId string `json:"memberOpenId" table:"member_open_id"`
+//		UserName     string `json:"userName" table:"user_name"`
+//		StateMember  uint8  `json:"stateMember" table:"state_member"`
+//		Location     string
+//	}
+//
+//	func (that MemberDto) TableName() string {
+//		return "member"
+//	}
+//
 //	opt := mygql.QueryOptions{
 //		 Page:     2,
 //		 PageSize: 5,
