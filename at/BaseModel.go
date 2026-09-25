@@ -404,7 +404,7 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 // begin int	装入起始位置
 // toPointer interface{}	Model指针
 // length int	装入边界
-func (*BaseModel) SetModelInstanceToListAddr(values []interface{}, begin int, toPointer interface{}, length int, nullable bool) {
+func (*BaseModel) SetModelInstanceToListAddr(values []interface{}, begin int, toPointer interface{}, length int) {
 	refInstance := reflect.ValueOf(toPointer)
 	kind := refInstance.Kind()
 	if reflect.Ptr != kind {
