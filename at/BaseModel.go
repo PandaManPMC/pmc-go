@@ -50,7 +50,7 @@ func (*BaseModel) GetModelFieldsToFieldStr(alias string, fields []string) (field
 	return
 }
 
-// GetModelFieldsNotPkToFieldStr	将字段数组拼成 alias.Field,...	不包括主键
+// GetModelFieldsByInsertToFieldStr	将字段数组拼成 alias.Field,...	不包括主键
 // alias string	查询表的别名
 // fields []string	table字段数组
 // mapModelTableField map[string]TableField  表字段与 Model 字段映射
@@ -404,7 +404,7 @@ func (instance *BaseModel) GetModelFieldCondition(condition map[string]interface
 // begin int	装入起始位置
 // toPointer interface{}	Model指针
 // length int	装入边界
-func (*BaseModel) SetModelInstanceToListAddr(values []interface{}, begin int, toPointer interface{}, length int) {
+func (*BaseModel) SetModelInstanceToListAddr(values []interface{}, begin int, toPointer interface{}, length int, nullable bool) {
 	refInstance := reflect.ValueOf(toPointer)
 	kind := refInstance.Kind()
 	if reflect.Ptr != kind {
@@ -431,6 +431,60 @@ func (*BaseModel) SetModelInstanceToListAddr(values []interface{}, begin int, to
 			continue
 		}
 		values[dataIndex+begin] = field.Addr().Interface()
+		dataIndex++
+	}
+}
+
+// SetModelInstanceToListAddrByNullScanner	Model有值参数按顺序存入切片
+// values []interface{}	用于装指针的切片
+// begin int	装入起始位置
+// toPointer interface{}	Model指针
+// length int	装入边界
+// nullable true 允许 NULL 值
+func (*BaseModel) SetModelInstanceToListAddrByNullScanner(
+	values []interface{},
+	begin int,
+	toPointer interface{},
+	length int,
+	nullable bool,
+) {
+	refInstance := reflect.ValueOf(toPointer)
+
+	if refInstance.Kind() != reflect.Ptr {
+		return
+	}
+
+	elem := refInstance.Elem()
+
+	dataIndex := 0
+
+	for i := 0; i < elem.NumField(); i++ {
+
+		if dataIndex == length {
+			break
+		}
+
+		field := elem.Field(i)
+		fKind := field.Kind()
+
+		if reflect.Struct == fKind {
+			continue
+		}
+
+		fName := field.Type().Name()
+
+		if "BaseModel" == fName {
+			continue
+		}
+
+		if nullable {
+			values[dataIndex+begin] = &NullValue{
+				target: field,
+			}
+		} else {
+			values[dataIndex+begin] = field.Addr().Interface()
+		}
+
 		dataIndex++
 	}
 }
