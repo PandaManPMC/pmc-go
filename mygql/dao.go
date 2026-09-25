@@ -229,7 +229,7 @@ func Find[T any](
 	if err := row.Scan(scanArgs...); err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, sql.ErrNoRows
+			return nil, nil
 		}
 
 		return nil, fmt.Errorf(
