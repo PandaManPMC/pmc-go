@@ -103,7 +103,7 @@ func Query[T any](
 	query += " LIMIT ? OFFSET ?"
 	args = append(args, pageSize, offset)
 
-	fmt.Println(query)
+	Debug(query)
 
 	rows, err := db.Query(query, args...)
 
@@ -163,7 +163,7 @@ func Count[T any](
 
 	var total int64
 
-	fmt.Println(query)
+	Debug(query)
 
 	err = db.QueryRow(
 		query,
@@ -199,7 +199,7 @@ func Find[T any](
 	}
 	query += " LIMIT 1 "
 
-	//fmt.Println(query)
+	Debug(query)
 
 	row := db.QueryRow(
 		query,

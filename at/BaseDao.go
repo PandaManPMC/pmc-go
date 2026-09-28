@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/PandaManPMC/pmc-go/fork"
 	"reflect"
 	"strconv"
 	"strings"
@@ -18,29 +19,26 @@ func GetInstanceByBaseDao() *BaseDao {
 	return &baseDaoInstance
 }
 
-var daoLogs Logs
-
-type Logs interface {
-	Debug(msg string)
-	Error(msg string, err error)
-}
-
 // InitDao 初始化 Dao
 // log Logs 日志输出工具，应实现 Logs 接口
-func InitDao(log Logs) {
+func InitDao(log fork.Logs) {
 	daoLogs = log
 }
 
+var daoLogs fork.Logs
+
 func (*BaseDao) LogDebug(msg string) {
-	if nil != daoLogs {
-		daoLogs.Debug(msg)
+	if nil == daoLogs {
+		return
 	}
+	daoLogs.Debug(msg)
 }
 
 func (*BaseDao) LogError(msg string, err error) {
-	if nil != daoLogs {
-		daoLogs.Error(msg, err)
+	if nil == daoLogs {
+		return
 	}
+	daoLogs.Error(msg, err)
 }
 
 // Transaction	开启事务
