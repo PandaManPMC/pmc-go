@@ -240,3 +240,87 @@ func Find[T any](
 
 	return &item, nil
 }
+
+func QueryBySQL[T any](
+	query string,
+	db *sql.DB,
+	opts *QueryOptions,
+	args ...any,
+) ([]T, error) {
+
+	meta, err := getStructMeta[T]()
+	if err != nil {
+		return nil, err
+	}
+
+	page := 1
+	pageSize := 20
+
+	if opts != nil {
+		if opts.Page > 0 {
+			page = opts.Page
+		}
+
+		if opts.PageSize > 0 {
+			pageSize = opts.PageSize
+		}
+
+		if pageSize > maxPageSize {
+			pageSize = maxPageSize
+		}
+	}
+
+	if page > math.MaxInt/pageSize {
+		return nil, fmt.Errorf("page is too large")
+	}
+
+	if nil != opts && opts.OrderBy != "" {
+		order := OrderASC
+		if strings.EqualFold(opts.Order, OrderDESC) {
+			order = OrderDESC
+		}
+		query += " ORDER BY " + opts.OrderBy + " " + order
+	}
+
+	offset := (page - 1) * pageSize
+	query += " LIMIT ? OFFSET ?"
+	args = append(args, pageSize, offset)
+
+	Debug(query)
+
+	rows, err := db.Query(query, args...)
+
+	if nil != err {
+		return nil, fmt.Errorf(
+			"query failed: %w",
+			err,
+		)
+	}
+	result := make([]T, 0)
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var item T
+		if err := scanStruct(
+			rows,
+			&item,
+			meta,
+		); err != nil {
+			return nil, fmt.Errorf(
+				"scan failed: %w",
+				err,
+			)
+		}
+		result = append(result, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf(
+			"rows iteration failed: %w",
+			err,
+		)
+	}
+
+	return result, nil
+}

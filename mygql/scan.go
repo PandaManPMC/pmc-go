@@ -7,6 +7,7 @@ import (
 	"reflect"
 )
 
+// 把 SQL 查询结果 rows 当前这一行的数据，通过反射自动填充到一个 Go struct 里面。
 func scanStruct(
 	rows *sql.Rows,
 	dest any,
